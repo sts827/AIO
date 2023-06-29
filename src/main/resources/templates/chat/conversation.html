@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>웨이챗</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<input type="text" id="messageInput" placeholder="Enter message">
+<button id="sendButton">Send</button>
+<div id="chatMessages"></div>
+
+<script>
+    const webSocket = new WebSocket("ws://" + window.location.host + "/chat");
+
+    webSocket.onmessage = function (event) {
+        const message = JSON.parse(event.data);
+        const chatMessages = document.getElementById("chatMessages");
+        chatMessages.innerHTML += "<p>" + message.content + "</p>";
+    };
+
+    document.getElementById("sendButton").onclick = function () {
+        const messageInput = document.getElementById("messageInput");
+        const message = {
+            content: messageInput.value
+        };
+        webSocket.send(JSON.stringify(message));
+        messageInput.value = "";
+    };
+</script>
+</body>
+</html>
