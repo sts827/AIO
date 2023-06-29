@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 
 @Controller
 public class PageController {
@@ -47,6 +48,13 @@ public class PageController {
 
         mav.setViewName("/plan/planning");
         return mav;
+    }
+
+    @GetMapping(value="/planning")
+    public HashMap<String,Object> setPlanning(){
+        HashMap<String,Object> resultMap = new HashMap<>();
+
+        return resultMap;
     }
 
 }
