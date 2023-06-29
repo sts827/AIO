@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOG_PATH" value="./logs"/>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>[%d{HH:mm:ss.SSS}][%-5level][%logger.%method:line%line] - %msg%n</pattern>
+		</encoder>
+    </appender>
+
+	<springProfile name="dev">
+		<appender name="dev-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>c://logs//waytraveler.dev.log</file>
+			<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+				<fileNamePattern>c://logs//waytraveler.%d{yyyy-MM-dd}.%i.dev.log</fileNamePattern>
+				<maxHistory>3</maxHistory>
+				<maxFileSize>100MB</maxFileSize>
+			</rollingPolicy>
+			<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>[%d{yyyy MMM dd HH:mm:ss.SSS}][%-5level][%logger.%method:line%line] - %msg%n</pattern>
+			</encoder>
+		</appender>
+
+		<root level="INFO">
+			<appender-ref ref="console" />
+			<appender-ref ref="dev-file" />
+		</root>
+		<!-- -->
+		<logger name="com.zaxxer.hikari" level="off" additivity="false">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="org.apache" level="off" additivity="false">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="org.springframework" level="off">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="org.springframework.security" level="off" additivity="false">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="org.springframework.servlet" level="off" additivity="false">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="org.springframework.web" level="off" additivity="false">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="_org.springframework.web" level="off" additivity="false">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="org.springframework.core" level="off" additivity="false">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="org.springframework.beans" level="off" additivity="false">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="org.springframework.context" level="off" additivity="false">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="org.springframework.jmx" level="off" additivity="false">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="org.springframework.boot" level="off" additivity="false">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="org.springframework.jdbc" level="off" additivity="false" >
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="org.springframework.expression" level="error">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="org.springframework.jdbc.support" level="debug">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="org.thymeleaf" level="error">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="org.thymeleaf.exceptions" level="error" additivity="false">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="org.mybatis" level="info" additivity="false">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="log4jdbc" level="off" additivity="false">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="jdbc" level="off">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="jdbc.sqltiming" level="debug" >
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="com.wayplus.waytraveler" level="off">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="com.wayplus.waytraveler.config.handler" level="debug" additivity="false">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="com.wayplus.waytraveler.controller" level="debug" additivity="false">
+			<appender-ref ref="console" />
+		</logger>
+		<logger name="com.wayplus.waytraveler.mapper" level="debug" additivity="false">
+			<appender-ref ref="console" />
+		</logger>
+
+	</springProfile>
+
+	<springProfile name="mac">
+		<appender name="mac-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>/Users/wayplus2021/Documents/workspace/logs/jejuFolk.dev.log</file>
+			<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+				<fileNamePattern>/Users/woojin/Documents/workspace/logs/jejuFolk.%d{yyyy-MM-dd}.%i.dev.log</fileNamePattern>
+				<maxHistory>3</maxHistory>
+				<maxFileSize>100MB</maxFileSize>
+			</rollingPolicy>
+			<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>[%d{yyyy MMM dd HH:mm:ss.SSS}][%-5level][%logger.%method:line%line] - %msg%n</pattern>
+			</encoder>
+		</appender>
+
+		<root level="debug">
+			<appender-ref ref="console" />
+			<appender-ref ref="mac-file" />
+		</root>
+
+	</springProfile>
+
+	<springProfile name="server">
+		<appender name="server-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>/logs/waytraveler.log</file>
+			<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+				<fileNamePattern>/logs/waytraveler.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+				<maxHistory>30</maxHistory>
+				<maxFileSize>100MB</maxFileSize>
+			</rollingPolicy>
+			<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>[%d{yyyy MMM dd HH:mm:ss.SSS}][%-5level][%logger.%method:line%line] - %msg%n</pattern>
+			</encoder>
+		</appender>
+
+		<root level="warn">
+			<appender-ref ref="server-file" />
+		</root>
+		<logger name="com.wayplus.waytraveler" level="info" additivity="false">
+			<appender-ref ref="server-file" />
+		</logger>
+	</springProfile>
+</configuration>

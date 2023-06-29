@@ -1,0 +1,194 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayplus.waytraveler.mapper.UserMapper">
+
+    <select id="selectUserByUserid" parameterType="String" resultType="LoginUser">
+        SELECT user_email, user_pass, user_name,
+               user_tel, user_mobile, user_role,
+               user_addr, user_zipcode, user_addr_detail,
+               user_group_code, user_token_id,
+               user_class_name, user_class_code, mailing_yn,
+               user_join_date, last_login_date, last_password_date,
+               naver_token, kakao_token, secondary_email
+          FROM user
+         WHERE user_email = #{value}
+    </select>
+
+    <insert id="insertUserLoginLog" parameterType="HashMap">
+        INSERT INTO user_login_session
+               (user_email, login_session, login_ip,
+                login_agent, login_referer, login_time)
+        VALUES (#{UserEmail}, #{SessionId}, #{LoginIp},
+                #{UserAgent}, #{Referer}, now())
+    </insert>
+
+    <update id="updateUserLastLoginDate" parameterType="LoginUser">
+        UPDATE user SET last_login_date = now()
+         WHERE user_email = #{user_email} AND user_name = #{user_name}
+    </update>
+
+    <select id="selectUserLastLoginTime" parameterType="HashMap" resultType="String">
+        SELECT MAX(login_time) FROM user_login_session
+         WHERE user_email = #{userId} AND login_session != #{sessionId}
+    </select>
+
+    <update id="updateUserPassword" parameterType="LoginUser">
+        UPDATE user SET user_pass = #{user_pass}, last_password_date = now()
+         WHERE user_email = #{user_email}
+    </update>
+
+    <select id="selectUserListByRole" parameterType="String" resultType="LoginUser">
+        SELECT user_email, user_name, user_mobile, user_role,
+               user_class_name, user_class_code, mailing_yn,
+               user_join_date, last_login_date, naver_token, kakao_token
+          FROM user
+         WHERE user_role = #{value}
+         ORDER BY user_join_date
+    </select>
+
+    <insert id="insertNewUser" parameterType="LoginUser">
+        INSERT INTO user
+               (user_email, user_pass, user_tel,
+                user_name, user_mobile, user_role,
+                user_addr, user_zipcode, user_addr_detail,
+                user_class_name, user_class_code, mailing_yn,
+                user_token_id, user_join_date, user_modify_date)
+        VALUES (#{user_email}, #{user_pass}, #{user_tel},
+                #{user_name}, #{user_mobile}, #{user_role},
+                #{user_addr}, #{user_zipcode}, #{user_addr_detail},
+                #{user_class_name}, #{user_class_code}, #{mailing_yn},
+                #{user_token_id}, now(), now())
+    </insert>
+
+    <delete id="deleteUserByUserid" parameterType="String">
+        DELETE FROM user
+         WHERE user_email = #{value}
+    </delete>
+
+    <update id="updateUserSessionLogout" parameterType="LoginUserSession">
+        UPDATE user_login_session
+           SET logout_time = now(), logout_type = #{logout_type}
+         WHERE user_email = #{user_email} AND login_session = #{login_session}
+    </update>
+
+    <insert id="insertUserLoginAttemptLog" parameterType="LoginAttemptLog">
+        INSERT INTO user_login_attempt_log
+               (user_email, attempt_ip,
+                attempt_agent, attempt_referer, attempt_time,
+                error_code, error_message)
+        VALUES (#{user_email}, #{attempt_ip},
+                #{attempt_agent}, #{attempt_referer}, now(),
+                #{error_code}, #{error_message})
+    </insert>
+
+    <update id="updateUserNewTokenId" parameterType="LoginUser">
+        UPDATE user
+           SET user_token_id = #{user_token_id}
+         WHERE user_email = #{user_email}
+    </update>
+
+    <update id="updateUserWebLog" parameterType="HashMap">
+        UPDATE user_web_log
+           SET user_token = #{after}, tracking = 'Y'
+         WHERE user_token = #{before} AND tracking = 'N'
+    </update>
+
+    <update id="updateUserEstimateTokenId" parameterType="HashMap">
+        UPDATE product_estimate
+           SET user_token = #{after}
+         WHERE user_token = #{before}
+    </update>
+
+    <insert id="insertUserWebLog" parameterType="UserWebLog">
+        INSERT INTO user_web_log
+               (user_token, user_email,
+                referer, request_uri, request_time,
+                request_host, session_id, tracking)
+        VALUES (#{user_token}, #{user_email},
+                #{referer}, #{request_uri}, now(),
+                #{request_host}, #{session_id}, #{tracking})
+    </insert>
+
+    <update id="updateUserInfo" parameterType="LoginUser">
+        UPDATE user
+           SET user_name = #{user_name},
+               user_mobile = #{user_mobile},
+               mailing_yn = #{mailing_yn},
+                <if test="@kr.co.wayplus.jejuFolk.util.MybatisUtil@isNotEmpty(user_pass)">
+                   user_pass = #{user_pass},
+                   last_password_date = now(),
+                </if>
+               user_modify_date = now()
+         WHERE user_email = #{user_email}
+    </update>
+
+    <select id="selectUserCountById" parameterType="String" resultType="Integer">
+        SELECT count(*) FROM user
+         WHERE user_email = #{value}
+    </select>
+
+    <select id="selectUserIdByUserInfo" parameterType="LoginUser" resultType="LoginUser">
+        SELECT user_email, user_token_id, user_name, user_mobile
+          FROM user
+         WHERE user_name =  #{user_name} AND REPLACE(user_mobile, '-', '') = REPLACE(#{user_mobile}, '-', '')
+    </select>
+
+    <select id="selectUserRePasswordByUserInfo" parameterType="LoginUser" resultType="LoginUser">
+        SELECT user_email, user_token_id, user_name, user_mobile
+          FROM user
+         WHERE user_email = #{user_email} AND user_name =  #{user_name} AND REPLACE(user_mobile, '-', '') = REPLACE(#{user_mobile}, '-', '')
+    </select>
+
+    <select id="selectUserByUserToken" parameterType="LoginUser" resultType="LoginUser">
+        SELECT user_email, user_token_id, user_name, user_mobile
+          FROM user
+         WHERE user_email = #{user_email} AND user_token_id = #{user_token_id}
+    </select>
+    <!--리뷰 등록-->
+<!--    <insert id="insertReview" parameterType="ProductReview" useGeneratedKeys="true" keyProperty="uid">-->
+<!--        INSERT INTO product_review-->
+<!--        (-->
+<!--             product_num, contents, images, create_id, create_date-->
+<!--        )-->
+<!--        VALUES-->
+<!--        (-->
+<!--             #{product_num}, #{contents}, #{images}, #{create_id}, NOW()-->
+<!--        )-->
+<!--    </insert>-->
+    <!--리뷰 첨부파일 등록-->
+<!--    <insert id="insertReviewAttachFile" parameterType="ReviewAttachFile">-->
+<!--        INSERT INTO review_attach_file-->
+<!--        (-->
+<!--            review_id, service_type,-->
+<!--            upload_path, upload_filename,-->
+<!--            file_extension, file_size, file_mimetype,-->
+<!--            origin_filename, upload_id, upload_date-->
+<!--        )-->
+<!--        VALUES-->
+<!--        (-->
+<!--            #{review_id}, #{service_type},-->
+<!--            #{upload_path}, #{upload_filename},-->
+<!--            #{file_extension}, #{file_size}, #{file_mimetype},-->
+<!--            #{origin_filename}, #{upload_id}, now()-->
+<!--        )-->
+<!--    </insert>-->
+    <!--확인하지 않은 1:1 문의-->
+<!--    <select id="selectNotCheckQnqCount" resultType="int">-->
+<!--        SELECT COUNT(*)-->
+<!--        FROM board_contents-->
+<!--        WHERE board_id = '3' AND comment_count = 0 AND delete_yn = 'N'-->
+<!--    </select>-->
+<!--    &lt;!&ndash;확인하지 않은 상품문의&ndash;&gt;-->
+<!--    <select id="selectNotCheckProductQnqCount" resultType="int">-->
+<!--        SELECT COUNT(*)-->
+<!--        FROM board_contents-->
+<!--        WHERE board_id = '4' AND comment_count = 0 AND delete_yn = 'N'-->
+<!--    </select>-->
+<!--    &lt;!&ndash;확인하지 않은 체험예약&ndash;&gt;-->
+<!--    <select id="selectNotCheckExpCount" resultType="int">-->
+<!--        SELECT COUNT(*)-->
+<!--        FROM reservation_receipt-->
+<!--        WHERE comment IS NULL AND delete_yn = 'N'-->
+<!--    </select>-->
+</mapper>
