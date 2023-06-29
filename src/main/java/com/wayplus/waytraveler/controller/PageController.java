@@ -41,4 +41,12 @@ public class PageController {
         return mav;
     }
 
+    @GetMapping(value="/plans")
+    public ModelAndView planningPage(){
+        ModelAndView mav = new ModelAndView();
+
+        mav.setViewName("/plan/planning");
+        return mav;
+    }
+
 }
