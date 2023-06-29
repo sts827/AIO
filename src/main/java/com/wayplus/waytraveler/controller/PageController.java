@@ -37,7 +37,7 @@ public class PageController {
 
         ModelAndView mav = new ModelAndView();
 
-        mav.setViewName("index");
+        mav.setViewName("/chat/conversation");
 
         return mav;
     }

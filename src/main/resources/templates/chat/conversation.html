@@ -9,30 +9,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>웨이챗</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 </head>
 <body>
+<h1>Chat Application</h1>
 
-<input type="text" id="messageInput" placeholder="Enter message">
-<button id="sendButton">Send</button>
+<!-- 채팅 메시지 표시를 위한 영역 -->
 <div id="chatMessages"></div>
 
+<!-- 개별 채팅 입력 폼 -->
+<input type="text" id="privateChatInput" placeholder="Enter private chat message" />
+<button onclick="sendPrivateMessage()">Send Private Message</button>
+
+<!-- 그룹 채팅 입력 폼 -->
+<input type="text" id="groupChatInput" placeholder="Enter group chat message" />
+<button onclick="sendGroupMessage()">Send Group Message</button>
+
 <script>
-    const webSocket = new WebSocket("ws://" + window.location.host + "/chat");
+    let socket = new SockJS('/chat'); // WebSocket 연결을 위한 SockJS 객체 생성
+    let stompClient = Stomp.over(socket); // SockJS 객체를 사용하여 Stomp 클라이언트 생성
 
-    webSocket.onmessage = function (event) {
-        const message = JSON.parse(event.data);
-        const chatMessages = document.getElementById("chatMessages");
-        chatMessages.innerHTML += "<p>" + message.content + "</p>";
-    };
+    // WebSocket 연결 시 호출되는 콜백 함수
+    stompClient.connect({}, function(frame) {
+        console.log('Connected: ' + frame);
 
-    document.getElementById("sendButton").onclick = function () {
-        const messageInput = document.getElementById("messageInput");
-        const message = {
-            content: messageInput.value
+        // 개별 채팅 구독 (수신) 처리
+        stompClient.subscribe('/private/messages', function(message) {
+            showMessage(JSON.parse(message.body));
+        });
+
+        // 그룹 채팅 구독 (수신) 처리
+        stompClient.subscribe('/group/messages', function(message) {
+            showMessage(JSON.parse(message.body));
+        });
+    });
+
+    // 개별 채팅 메시지 전송
+    function sendPrivateMessage() {
+        let receiverId = 'receiverId'; // 수신자 ID 설정
+        let message = document.getElementById('privateChatInput').value;
+
+        let chatMessage = {
+            senderId: 'senderId', // 발신자 ID 설정
+            receiverId: receiverId,
+            content: message
         };
-        webSocket.send(JSON.stringify(message));
-        messageInput.value = "";
-    };
+
+        stompClient.send('/app/private', {}, JSON.stringify(chatMessage));
+    }
+
+    // 그룹 채팅 메시지 전송
+    function sendGroupMessage() {
+        let roomId = 'roomId'; // 채팅 방 ID 설정
+        let message = document.getElementById('groupChatInput').value;
+
+        let chatMessage = {
+            senderId: 'senderId', // 발신자 ID 설정
+            roomId: roomId,
+            content: message
+        };
+
+        stompClient.send('/app/group', {}, JSON.stringify(chatMessage));
+    }
+
+    // 채팅 메시지 표시
+    function showMessage(message) {
+        let chatMessages = document.getElementById('chatMessages');
+        let messageElement = document.createElement('p');
+        messageElement.innerText = message.senderId + ': ' + message.content;
+        chatMessages.appendChild(messageElement);
+    }
 </script>
 </body>
 </html>
