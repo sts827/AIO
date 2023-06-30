@@ -13,6 +13,7 @@ public class UserWebLog {
     private String request_uri;
     private String request_time;
     private String request_host;
+    private String request_agent;
     private String session_id;
     private String tracking;
 }

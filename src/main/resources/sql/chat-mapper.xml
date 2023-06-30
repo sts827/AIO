@@ -1,0 +1,42 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayplus.waytraveler.mapper.ChatMapper">
+
+   <select id="selectChatRoom" parameterType="Integer" resultType="ChatRoom">
+       SELECT * FROM chat_room
+   </select>
+
+    <select id="selectChatRoomList" resultType="ChatRoom">
+        SELECT * FROM chat_room
+    </select>
+
+    <select id="selectChatRoomListBySearch" parameterType="HashMap" resultType="ChatRoom">
+        SELECT * FROM chat_room
+        WHERE room_name LIkE CONCAT('%',#{room_name},'%')
+    </select>
+
+    <insert id="insertChatRoom" parameterType="ChatRoom">
+        INSERT INTO chat_room (room_name,create_date)
+         VALUES(
+                #{room_name},
+                #{create_date}
+                )
+    </insert>
+
+    <insert id="insertChatMessage" parameterType="ChatMessage">
+        INSERT INTO chat_message(room_id,user_id,message)
+        VALUES(
+               #{room_id},
+               #{user_id},
+               #{message}
+               )
+    </insert>
+
+    <select id="selectChatMessagesByRoomID" parameterType="Integer" resultType="ChatMessage">
+        SELECT * FROM chat_message
+        WHERE room_id = #{room_id}
+    </select>
+
+
+</mapper>

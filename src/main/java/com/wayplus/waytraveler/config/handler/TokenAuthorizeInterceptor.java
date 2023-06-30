@@ -42,7 +42,9 @@ public class TokenAuthorizeInterceptor implements HandlerInterceptor {
     public TokenAuthorizeInterceptor(UserService userService){this.userService=userService;}
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+    public boolean preHandle(HttpServletRequest request,
+                             HttpServletResponse response,
+                             Object handler)
             throws Exception {
         logger.debug("================== Start Token Authorize Interceptor ==================");
 
@@ -136,10 +138,12 @@ public class TokenAuthorizeInterceptor implements HandlerInterceptor {
                 webLog.setUser_token(trackerCookie.getValue());
                 webLog.setTracking("N");
             }
-            if(request.getHeader("Referer").length() > 200)
+            if(request.getHeader("Referer").length() > 200){
                 webLog.setReferer(request.getHeader("Referer").substring(0, 200));
-            else
+            }
+            else{
                 webLog.setReferer(request.getHeader("Referer"));
+            }
             webLog.setRequest_host(request.getRemoteHost());
             webLog.setRequest_uri(request.getRequestURI());
             userService.writeUserWebLog(webLog);

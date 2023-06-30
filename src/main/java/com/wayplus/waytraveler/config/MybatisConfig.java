@@ -21,7 +21,6 @@ import javax.sql.DataSource;
 @Lazy
 @Configuration
 @EnableTransactionManagement
-@MapperScan(basePackages = {"com.wayplus.waytraveler.mapper"})
 public class MybatisConfig {
 
     @Bean(name="dataSource")
