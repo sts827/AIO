@@ -26,6 +26,6 @@ public interface ChatMapper {
     void insertChatMessage(ChatMessage chatMessage);
 
     // admin
-    ChatMessage selectChatMessagesByRoomID(int roomId);
+    ArrayList<ChatMessage> selectChatMessagesByRoomID(int roomId);
 
 }

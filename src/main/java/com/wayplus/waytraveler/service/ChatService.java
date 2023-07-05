@@ -34,12 +34,16 @@ public class ChatService {
         return rooms;
     }
 
-    public ChatMessage joinRoom(int roomId){
+//    public ChatMessage joinRoom(int roomId){
+//
+//        ChatMessage messageContent = chatMapper.selectChatMessagesByRoomID(roomId);
+//
+//        return messageContent;
+//    }
 
-        ChatMessage messageContent = chatMapper.selectChatMessagesByRoomID(roomId);
 
-        return messageContent;
+    public ArrayList<ChatMessage> selectChatMessageByRoomId(int id) {
+        ArrayList<ChatMessage> messages = chatMapper.selectChatMessagesByRoomID(id);
+        return messages;
     }
-
-
 }

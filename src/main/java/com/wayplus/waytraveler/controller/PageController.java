@@ -24,14 +24,18 @@ public class PageController {
 
     @Value("${cookie-set.domain}")
     private String cookieDomain;
+
     @Value("${cookie-set.prefix}")
     private String cookieName;
-    @Value("${upload.path.file}")
 
+    @Value("${upload.path.file}")
     private String fileUploadPath;
+
     private final Logger logger = LoggerFactory.getLogger(PageController.class);
+
     private final PageService pageService;
     private final ChatService chatService;
+
 
     @Autowired
     public PageController(PageService pageService,ChatService chatService){
